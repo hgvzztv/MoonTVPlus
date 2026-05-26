@@ -23,4 +23,8 @@ jobs:
         run: docker push ghcr.io/${{ github.actor }}/hf-mtv-dma:latest
       - name: Show result
         run: |
-          echo "Pushed: ghcr.io/${{ github.actor }}/hf-mtv-dma:latest"
+          echo "✅ Pushed: ghcr.io/${{ github.actor }}/hf-mtv-dma:latest"
+          echo "📅 创建时间:"
+          docker inspect ghcr.io/${{ github.actor }}/hf-mtv-dma:latest --format '{{.Created}}'
+          echo "🔑 源镜像摘要:"
+          docker inspect ghcr.io/${{ github.actor }}/hf-mtv-dma:latest --format '{{index .RepoDigests 0}}'
