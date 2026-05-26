@@ -14,17 +14,18 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Pull source image
-        run: docker pull ghcr.io/mtvpls/moontvplus:latest
-      - name: Re-tag
+
+      - name: Install crane
+        uses: imjasonh/setup-crane@v0.4
+
+      - name: Copy image with crane
         run: |
-          docker tag ghcr.io/mtvpls/moontvplus:latest ghcr.io/${{ github.actor }}/hf-mtv-dma:latest
-      - name: Push to GHCR
-        run: docker push ghcr.io/${{ github.actor }}/hf-mtv-dma:latest
+          crane copy ghcr.io/mtvpls/moontvplus:latest ghcr.io/${{ github.actor }}/hf-mtv-dma:latest
+
       - name: Show result
         run: |
           echo "✅ Pushed: ghcr.io/${{ github.actor }}/hf-mtv-dma:latest"
-          echo "📅 创建时间:"
-          docker inspect ghcr.io/${{ github.actor }}/hf-mtv-dma:latest --format '{{.Created}}'
           echo "🔑 源镜像摘要:"
-          docker inspect ghcr.io/${{ github.actor }}/hf-mtv-dma:latest --format '{{index .RepoDigests 0}}'
+          crane digest ghcr.io/mtvpls/moontvplus:latest
+          echo "🔑 你的镜像摘要:"
+          crane digest ghcr.io/${{ github.actor }}/hf-mtv-dma:latest
