@@ -1,0 +1,42 @@
+name: Sync Docker Image
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Pull and push to ghcr.io
+        run: |
+          docker pull ghcr.io/mtvpls/moontvplus:latest
+          docker tag ghcr.io/mtvpls/moontvplus:latest ghcr.io/mtvpls/moontvplus:latest
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/mtvpls/moontvplus:latest
+
+      - name: Update README with sync time
+        run: |
+          SYNC_TIME=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S 北京时间')
+          
+          if ! grep -q "<!-- LAST_SYNC -->" README.md; then
+            echo "" >> README.md
+            echo "<!-- LAST_SYNC -->" >> README.md
+            echo "## 🔄 最后同步时间" >> README.md
+            echo "<!-- LAST_SYNC_END -->" >> README.md
+          fi
+          
+          sed -i "/<!-- LAST_SYNC -->/,/<!-- LAST_SYNC_END -->/{
+            /<!-- LAST_SYNC -->/{ n; s/.*/\`${SYNC_TIME}\`/ }
+          }" README.md
+
+      - name: Commit and push README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --cached --quiet || git commit -m "chore: update last sync time [skip ci]"
+          git push
