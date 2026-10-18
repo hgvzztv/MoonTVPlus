@@ -673,5 +673,5 @@ NEXT_PUBLIC_VOICE_CHAT_STRATEGY 选项解释：
 [![Star History Chart](https://api.star-history.com/svg?repos=mtvpls/moontvplus&type=Date)](https://www.star-history.com/#mtvpls/moontvplus&Date)
 
 <!-- LAST_SYNC -->
-`2026-10-11 12:08:30 北京时间`
+`2026-10-18 11:07:45 北京时间`
 <!-- LAST_SYNC_END -->
